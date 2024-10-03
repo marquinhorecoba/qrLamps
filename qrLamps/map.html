@@ -71,10 +71,7 @@
             database.ref('reports').once('value').then((snapshot) => {
                 snapshot.forEach((childSnapshot) => {
                     const report = childSnapshot.val();
-                    const reportMarker = L.circleMarker([report.latitude, report.longitude], {
-                        color: report.status === 'resolved' ? 'green' : 'red',
-                        radius: 8
-                    })
+                    L.marker([report.latitude, report.longitude], { icon: redIcon })
                         .addTo(map)
                         .bindPopup(`
                             <strong>Failure Type:</strong> ${report.failure_type}<br>

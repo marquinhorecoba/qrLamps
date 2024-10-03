@@ -12,23 +12,71 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
+        /* From Uiverse.io by omriluz */
+        .map-container {
+            width: 90%;
+            max-width: 1200px;
+            background: linear-gradient(#212121, #212121) padding-box,
+            linear-gradient(145deg, transparent 35%, #e81cff, #40c9ff) border-box;
+            border: 2px solid transparent;
+            padding: 32px 24px;
+            font-size: 14px;
+            font-family: inherit;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-sizing: border-box;
+            border-radius: 16px;
+            background-size: 200% 100%;
+            animation: gradient 5s ease infinite;
+            margin: auto;
+            margin-top: 50px;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        body {
+            background-color: #121212;
+            font-family: Arial, sans-serif;
+            color: #f1f1f1;
+        }
+
         #map {
             height: 600px;
             width: 100%;
-            margin-bottom: 30px;
+            border-radius: 12px;
         }
-        body {
-            background-color: #f8f9fa;
+
+        .text-center {
+            margin-top: 20px;
+            color: #f1f1f1;
         }
-        .container {
-            margin-top: 30px;
+
+        .leaflet-popup-content {
+            font-size: 14px;
+        }
+
+        .leaflet-popup-content strong {
+            color: #e81cff;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1 class="text-center mb-4"><i class="fas fa-map-marker-alt"></i> Street Lamp Reports Map</h1>
+    <h1 class="text-center"><i class="fas fa-map-marker-alt"></i> Reportes/Alumbrado Digital</h1>
+
+    <div class="map-container">
         <div id="map"></div>
     </div>
 
@@ -53,20 +101,13 @@
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Custom red marker icon for reports
-        const redIcon = L.icon({
-            iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-red.png',
-            iconSize: [25, 41], // size of the icon
-            iconAnchor: [12, 41], // point of the icon which will correspond to marker's location
-            popupAnchor: [1, -34] // point from which the popup should open relative to the iconAnchor
-        });
-
         // Load street lamps and reports from Firebase
         function loadLampsAndReports() {
+            // Load lamp markers
             database.ref('lamps_test').once('value').then((snapshot) => {
                 snapshot.forEach((childSnapshot) => {
                     const lamp = childSnapshot.val();
-                    const lampMarker = L.marker([lamp.lat, lamp.lng])
+                    L.marker([lamp.lat, lamp.lng])
                         .addTo(map)
                         .bindPopup(`
                             <strong>ID:</strong> ${childSnapshot.key}<br>
@@ -76,16 +117,21 @@
                 });
             });
 
+            // Load report markers as red circles
             database.ref('reports').once('value').then((snapshot) => {
                 snapshot.forEach((childSnapshot) => {
                     const report = childSnapshot.val();
-                    L.marker([report.latitude, report.longitude], { icon: redIcon })
-                        .addTo(map)
-                        .bindPopup(`
-                            <strong>Failure Type:</strong> ${report.failure_type}<br>
-                            <strong>Status:</strong> ${report.status}<br>
-                            <strong>Timestamp:</strong> ${report.timestamp}
-                        `);
+                    L.circleMarker([report.latitude, report.longitude], {
+                        color: '#FF0000', // Red color for the circle marker
+                        radius: 8, // Size of the circle marker
+                        fillOpacity: 0.8,
+                    })
+                    .addTo(map)
+                    .bindPopup(`
+                        <strong>Failure Type:</strong> ${report.failure_type}<br>
+                        <strong>Status:</strong> ${report.status}<br>
+                        <strong>Timestamp:</strong> ${report.timestamp}
+                    `);
                 });
             });
         }

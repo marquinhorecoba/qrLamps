@@ -5,43 +5,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report Street Lamp Issue</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        #lampDetails {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .form-section {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        button:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Report an Issue with the Lamp</h1>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4"><i class="fas fa-lightbulb"></i> Report a Street Lamp Issue</h1>
 
-    <div id="lampDetails">
-        <h3>Lamp Details:</h3>
-        <p><strong>ID:</strong> <span id="lampId"></span></p>
-        <p><strong>Type:</strong> <span id="lampType"></span></p>
-        <p><strong>Geolocation:</strong> <span id="lampGeo"></span></p>
-        <p><strong>Status:</strong> <span id="lampStatus"></span></p>
+        <div id="lampDetails">
+            <h3>Lamp Details</h3>
+            <p><strong>ID:</strong> <span id="lampId"></span></p>
+            <p><strong>Type:</strong> <span id="lampType"></span></p>
+            <p><strong>Geolocation:</strong> <span id="lampGeo"></span></p>
+            <p><strong>Status:</strong> <span id="lampStatus"></span></p>
+        </div>
+
+        <div class="form-section">
+            <h3>Report an Issue</h3>
+            <form id="reportForm">
+                <div class="form-group">
+                    <label for="failureType">Failure Type:</label>
+                    <select id="failureType" class="form-control" required>
+                        <option value="broken_bulb">Broken Bulb</option>
+                        <option value="flickering">Flickering</option>
+                        <option value="not_working">Not Working</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="status">Status:</label>
+                    <select id="status" class="form-control" required>
+                        <option value="pending">Pending</option>
+                        <option value="resolved">Resolved</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-paper-plane"></i> Submit Report</button>
+            </form>
+        </div>
     </div>
-
-    <form id="reportForm">
-        <h3>Report an Issue:</h3>
-        <label for="failureType">Failure Type:</label>
-        <select id="failureType" required>
-            <option value="broken_bulb">Broken Bulb</option>
-            <option value="flickering">Flickering</option>
-            <option value="not_working">Not Working</option>
-        </select>
-        <br><br>
-        <label for="status">Status:</label>
-        <select id="status" required>
-            <option value="pending">Pending</option>
-            <option value="resolved">Resolved</option>
-        </select>
-        <br><br>
-        <button type="submit">Submit Report</button>
-    </form>
 
     <script>
         // Your Firebase configuration
         const firebaseConfig = {
-          apiKey: "AIzaSyCGuGpJEWo1_9gWwgSv3JO9s1051wDpY6E",
+            apiKey: "AIzaSyCGuGpJEWo1_9gWwgSv3JO9s1051wDpY6E",
     authDomain: "alumbradopubliconte.firebaseapp.com",
     databaseURL: "https://alumbradopubliconte-default-rtdb.firebaseio.com",
     projectId: "alumbradopubliconte",
@@ -50,7 +85,6 @@
     appId: "1:842157703635:web:64db480e6191f6c0326f26",
     measurementId: "G-H4PG2MM8S5"
         };
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
@@ -119,3 +153,4 @@
 </body>
 
 </html>
+

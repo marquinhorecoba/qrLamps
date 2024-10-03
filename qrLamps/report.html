@@ -4,73 +4,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report Street Lamp Issue</title>
+    <title>Reporte-Luminarias24</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
+        /* From Uiverse.io by omriluz */
+        .form-container {
+            width: 400px;
+            background: linear-gradient(#212121, #212121) padding-box,
+            linear-gradient(145deg, transparent 35%, #e81cff, #40c9ff) border-box;
+            border: 2px solid transparent;
+            padding: 32px 24px;
+            font-size: 14px;
+            font-family: inherit;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-sizing: border-box;
+            border-radius: 16px;
+            background-size: 200% 100%;
+            animation: gradient 5s ease infinite;
+            margin: auto;
+            margin-top: 50px;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .form-container button:active {
+            scale: 0.95;
+        }
+
+        .form-container .form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-container .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .form-container .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #717171;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .form-container .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: #fff;
+            font-family: inherit;
+            background-color: transparent;
+            border: 1px solid #414141;
+        }
+
+        .form-container .form-group select:focus {
+            outline: none;
+            border-color: #e81cff;
+        }
+
+        .form-container .form-submit-btn {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            align-self: flex-start;
+            font-family: inherit;
+            color: #717171;
+            font-weight: 600;
+            width: 100%;
+            background: #313131;
+            border: 1px solid #414141;
+            padding: 12px 16px;
+            font-size: inherit;
+            gap: 8px;
+            margin-top: 8px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .form-container .form-submit-btn:hover {
+            background-color: #fff;
+            border-color: #fff;
+            color: #212121;
+        }
+
         body {
-            background-color: #f8f9fa;
+            background-color: #121212;
             font-family: Arial, sans-serif;
+            color: #f1f1f1;
         }
-        #lampDetails {
-            margin-bottom: 30px;
-            padding: 20px;
-            background: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-        }
-        .form-section {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-        }
-        button {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-        button:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
+
+        .text-center {
+            margin-top: 20px;
         }
     </style>
 </head>
 
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center mb-4"><i class="fas fa-lightbulb"></i> Report a Street Lamp Issue</h1>
+    <h1 class="text-center"><i class="fas fa-lightbulb"></i> Reporte Fallas de Lampara</h1>
 
-        <div id="lampDetails">
-            <h3>Lamp Details</h3>
+    <div class="form-container">
+        <div class="form-group">
+            <h3>Detalles de Lampara</h3>
             <p><strong>ID:</strong> <span id="lampId"></span></p>
-            <p><strong>Type:</strong> <span id="lampType"></span></p>
-            <p><strong>Geolocation:</strong> <span id="lampGeo"></span></p>
+            <p><strong>Tipo:</strong> <span id="lampType"></span></p>
+            <p><strong>Geolocalización:</strong> <span id="lampGeo"></span></p>
             <p><strong>Status:</strong> <span id="lampStatus"></span></p>
         </div>
 
-        <div class="form-section">
-            <h3>Report an Issue</h3>
-            <form id="reportForm">
-                <div class="form-group">
-                    <label for="failureType">Failure Type:</label>
-                    <select id="failureType" class="form-control" required>
-                        <option value="broken_bulb">Broken Bulb</option>
-                        <option value="flickering">Flickering</option>
-                        <option value="not_working">Not Working</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="status">Status:</label>
-                    <select id="status" class="form-control" required>
-                        <option value="pending">Pending</option>
-                        <option value="resolved">Resolved</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-paper-plane"></i> Submit Report</button>
-            </form>
-        </div>
+        <form id="reportForm" class="form">
+            <div class="form-group">
+                <label for="failureType">Tipo de falla:</label>
+                <select id="failureType" required>
+                    <option value="broken_bulb">Foco Dañado</option>
+                    <option value="flickering">Parpadeo</option>
+                    <option value="wire_damage">Cable dañado</option>
+                    <option value="not_working">No Enciende</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="status">Status:</label>
+                <select id="status" required>
+                    <option value="pending">Pendiente</option>
+                    <option value="resolved">Resuelto</option>
+                </select>
+            </div>
+            <button type="submit" class="form-submit-btn"><i class="fas fa-paper-plane"></i> Submit Report</button>
+        </form>
     </div>
 
     <script>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,9 +9,20 @@
     <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js"></script>
 </head>
+
 <body>
     <h1>Report an Issue with the Lamp</h1>
+
+    <div id="lampDetails">
+        <h3>Lamp Details:</h3>
+        <p><strong>ID:</strong> <span id="lampId"></span></p>
+        <p><strong>Type:</strong> <span id="lampType"></span></p>
+        <p><strong>Geolocation:</strong> <span id="lampGeo"></span></p>
+        <p><strong>Status:</strong> <span id="lampStatus"></span></p>
+    </div>
+
     <form id="reportForm">
+        <h3>Report an Issue:</h3>
         <label for="failureType">Failure Type:</label>
         <select id="failureType" required>
             <option value="broken_bulb">Broken Bulb</option>
@@ -30,7 +42,7 @@
     <script>
         // Your Firebase configuration
         const firebaseConfig = {
-           apiKey: "AIzaSyCGuGpJEWo1_9gWwgSv3JO9s1051wDpY6E",
+        apiKey: "AIzaSyCGuGpJEWo1_9gWwgSv3JO9s1051wDpY6E",
     authDomain: "alumbradopubliconte.firebaseapp.com",
     databaseURL: "https://alumbradopubliconte-default-rtdb.firebaseio.com",
     projectId: "alumbradopubliconte",
@@ -42,12 +54,34 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
+        // Get lamp ID from URL query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const lampId = urlParams.get('lamp_id');
+
+        // Display lamp details
+        const lampIdElement = document.getElementById('lampId');
+        const lampTypeElement = document.getElementById('lampType');
+        const lampGeoElement = document.getElementById('lampGeo');
+        const lampStatusElement = document.getElementById('lampStatus');
+
+        // Fetch and display lamp data from Firebase
+        database.ref('lamps_test/' + lampId).once('value').then((snapshot) => {
+            if (snapshot.exists()) {
+                const lampData = snapshot.val();
+                lampIdElement.textContent = lampId;
+                lampTypeElement.textContent = lampData.tipo;
+                lampGeoElement.textContent = `${lampData.lat}, ${lampData.lng}`;
+                lampStatusElement.textContent = lampData.status;
+            } else {
+                alert("Lamp data not found!");
+            }
+        }).catch((error) => {
+            console.error('Error fetching lamp data:', error);
+        });
+
+        // Handle form submission for reporting an issue
         document.getElementById('reportForm').addEventListener('submit', function (e) {
             e.preventDefault();
-
-            // Retrieve query parameter (lamp_id)
-            const urlParams = new URLSearchParams(window.location.search);
-            const lampId = urlParams.get('lamp_id');
 
             // Gather form data
             const failureType = document.getElementById('failureType').value;
@@ -74,7 +108,7 @@
                     }).then(() => {
                         alert('Report submitted successfully!');
                     }).catch((error) => {
-                        console.error('Error submitting report: ', error);
+                        console.error('Error submitting report:', error);
                     });
                 });
             } else {
@@ -83,4 +117,5 @@
         });
     </script>
 </body>
+
 </html>

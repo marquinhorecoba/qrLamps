@@ -1,28 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Street Lamp Reports Map</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
         #map {
             height: 600px;
             width: 100%;
+            margin-bottom: 30px;
+        }
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 30px;
         }
     </style>
 </head>
+
 <body>
-    <h1>Street Lamp Reports</h1>
-    <div id="map"></div>
+    <div class="container">
+        <h1 class="text-center mb-4"><i class="fas fa-map-marker-alt"></i> Street Lamp Reports Map</h1>
+        <div id="map"></div>
+    </div>
 
     <script>
         // Your Firebase configuration
         const firebaseConfig = {
-           apiKey: "AIzaSyCGuGpJEWo1_9gWwgSv3JO9s1051wDpY6E",
+            apiKey: "AIzaSyCGuGpJEWo1_9gWwgSv3JO9s1051wDpY6E",
     authDomain: "alumbradopubliconte.firebaseapp.com",
     databaseURL: "https://alumbradopubliconte-default-rtdb.firebaseio.com",
     projectId: "alumbradopubliconte",
@@ -35,19 +48,23 @@
         const database = firebase.database();
 
         // Initialize Leaflet map
-        const map = L.map('map').setView([25.6866, -100.3161], 13); // Centered on a specific location (e.g., San Pedro Garza García)
+        const map = L.map('map').setView([25.6866, -100.3161], 13); // Centered on a specific location
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Load street lamps and reports
+        // Load street lamps and reports from Firebase
         function loadLampsAndReports() {
-            database.ref('lamps').once('value').then((snapshot) => {
+            database.ref('lamps_test').once('value').then((snapshot) => {
                 snapshot.forEach((childSnapshot) => {
                     const lamp = childSnapshot.val();
-                    const lampMarker = L.marker([lamp.geolocation.lat, lamp.geolocation.lng])
+                    const lampMarker = L.marker([lamp.lat, lamp.lng])
                         .addTo(map)
-                        .bindPopup(`<strong>Type:</strong> ${lamp.type}<br><strong>ID:</strong> ${childSnapshot.key}`);
+                        .bindPopup(`
+                            <strong>ID:</strong> ${childSnapshot.key}<br>
+                            <strong>Type:</strong> ${lamp.tipo}<br>
+                            <strong>Status:</strong> ${lamp.status}
+                        `);
                 });
             });
 
@@ -55,10 +72,15 @@
                 snapshot.forEach((childSnapshot) => {
                     const report = childSnapshot.val();
                     const reportMarker = L.circleMarker([report.latitude, report.longitude], {
-                        color: report.status === 'resolved' ? 'green' : 'red'
+                        color: report.status === 'resolved' ? 'green' : 'red',
+                        radius: 8
                     })
                         .addTo(map)
-                        .bindPopup(`<strong>Failure Type:</strong> ${report.failure_type}<br><strong>Status:</strong> ${report.status}<br><strong>Timestamp:</strong> ${report.timestamp}`);
+                        .bindPopup(`
+                            <strong>Failure Type:</strong> ${report.failure_type}<br>
+                            <strong>Status:</strong> ${report.status}<br>
+                            <strong>Timestamp:</strong> ${report.timestamp}
+                        `);
                 });
             });
         }
@@ -66,4 +88,6 @@
         loadLampsAndReports();
     </script>
 </body>
+
 </html>
+
